@@ -1,3 +1,7 @@
+'''
+v1 is used for a different growtopia world: TYANDEL
+'''
+
 import pyautogui
 import keyboard
 import pydirectinput
