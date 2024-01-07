@@ -28,11 +28,28 @@ def loadSeed(jumps):
     respawn()
     pyautogui.sleep(4)
 
-    # move left to the chand vending machine
+    # move left to the chand seed vending machine
     pydirectinput.press('left', presses=6)
+    while True:
+        try:
+            face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
+            if face is None:
+                face = pyautogui.locateCenterOnScreen('gt-body-right.png', confidence=0.85)
+        except:
+            pyautogui.sleep(1)
+            face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
+            if face is None:
+                face = pyautogui.locateCenterOnScreen('gt-body-right.png', confidence=0.85)
+        pyautogui.sleep(1)
+        if face[0] < 970:
+            pydirectinput.press('d', presses=1)
+        elif face[0] > 1020:
+            pydirectinput.press('a', presses=1)
+        else:
+            break
 
     # change to wrench
-    wrench_inventory = pyautogui.locateCenterOnScreen('wrench-inventory.png')
+    wrench_inventory = pyautogui.locateCenterOnScreen('wrench-inventory.png', confidence=0.95)
     if wrench_inventory is None:
         pydirectinput.leftClick(491, 933)
 
@@ -59,17 +76,21 @@ def loadSeed(jumps):
         # click 'put item to machine'
         pydirectinput.leftClick(x=put_item[0], y=put_item[1])
 
+        chand_seed_inventory = pyautogui.locateCenterOnScreen('chand-seed-200.png', confidence=0.95)
+        pydirectinput.leftClick(x=chand_seed_inventory[0], y=chand_seed_inventory[1])
+
+    pyautogui.sleep(3)
     if jumps == 0:
         pydirectinput.press('left', presses=2)
         pydirectinput.press('up', presses=1)
-    else:
-        for i in range(jumps):
+    elif jumps > 0:
+        for i in range(0, jumps):
             if i == 0:
                 pydirectinput.press('up', presses=3)
-                pyautogui.sleep(0.5)
+                pyautogui.sleep(1)
                 continue
             pydirectinput.press('up', presses=2)
-            pyautogui.sleep(0.5)
+            pyautogui.sleep(1)
 
 def increaseJumps(jumps):
     global updated
@@ -88,6 +109,7 @@ def increaseJumps(jumps):
 def main():
     start_time = time.time()
 
+    print("Input at what level you are: ")
     jumps = int(input())
     full = True
 
