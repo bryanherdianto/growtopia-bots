@@ -14,14 +14,14 @@ def respawn():
     pyautogui.click(1209, 94)
     pyautogui.click(639, 299)
 
-def chand_seed_is_full():
+def chand_block_is_full():
     # check if there is already 200 chand block in inventory
-    chand_seed_inventory = pyautogui.locateCenterOnScreen('chand-200.png', confidence=0.95)
-    if chand_seed_inventory is None:
+    chand_block_inventory = pyautogui.locateCenterOnScreen('chand-200.png', confidence=0.95)
+    if chand_block_inventory is None:
         return False
     return True
 
-def loadSeed(jumps):
+def loadBlock(jumps):
     # stop moving
     pydirectinput.keyUp('a')
 
@@ -30,9 +30,22 @@ def loadSeed(jumps):
 
     # move left to the chand vending machine
     pydirectinput.press('left', presses=3)
+    while True:
+        face = None
+        while face is None:
+            face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
+            if face is None:
+                face = pyautogui.locateCenterOnScreen('gt-body-right.png', confidence=0.85)
+            
+        if face[0] < 1050:
+            pydirectinput.press('d', presses=1)
+        elif face[0] > 1100:
+            pydirectinput.press('a', presses=1)
+        else:
+            break
 
     # change to wrench
-    wrench_inventory = pyautogui.locateCenterOnScreen('wrench-inventory.png')
+    wrench_inventory = pyautogui.locateCenterOnScreen('wrench-inventory.png', confidence=0.95)
     if wrench_inventory is None:
         pydirectinput.leftClick(491, 933)
 
@@ -53,23 +66,45 @@ def loadSeed(jumps):
     put_item = pyautogui.locateCenterOnScreen('put-item.png', confidence=0.9)
     if put_item is None:
         # click 'add to machine'
-        add = pyautogui.locateCenterOnScreen('add-machine.png', confidence=0.95)
+        add = None
+        while add is None:
+            add = pyautogui.locateCenterOnScreen('add-machine.png', confidence=0.9)
         pydirectinput.leftClick(x=add[0], y=add[1])
     else:
         # click 'put item to machine'
         pydirectinput.leftClick(x=put_item[0], y=put_item[1])
 
+        chand_block_inventory = None
+        while chand_block_inventory is None:
+            chand_block_inventory = pyautogui.locateCenterOnScreen('chand-200.png', confidence=0.95)
+        pydirectinput.leftClick(x=chand_block_inventory[0], y=chand_block_inventory[1])
+
+        # press '1' to set price of item
+        pyautogui.sleep(3)
+        pydirectinput.press('1')
+
+        # scroll down
+        pyautogui.sleep(2)
+        pyautogui.scroll(-1)
+
+        # click 'update'
+        update_vend = None
+        while update_vend is None:
+            update_vend = pyautogui.locateCenterOnScreen('update-vend.png', confidence=0.95)
+        pydirectinput.leftClick(x=update_vend[0], y=update_vend[1])
+
+    pyautogui.sleep(3)
     if jumps == 0:
-        pydirectinput.press('left', presses=2)
+        pydirectinput.press('left', presses=6)
         pydirectinput.press('up', presses=1)
-    else:
-        for i in range(jumps):
+    elif jumps > 0:
+        for i in range(0, jumps):
             if i == 0:
                 pydirectinput.press('up', presses=3)
-                pyautogui.sleep(0.5)
+                pyautogui.sleep(1)
                 continue
             pydirectinput.press('up', presses=2)
-            pyautogui.sleep(0.5)
+            pyautogui.sleep(1)
 
 def increaseJumps(jumps):
     global updated
@@ -88,8 +123,8 @@ def increaseJumps(jumps):
 def main():
     start_time = time.time()
 
+    print("Input at what level you are: ")
     jumps = int(input())
-    jumps += 1
     full = True
 
     pyautogui.sleep(3)
@@ -97,9 +132,9 @@ def main():
     while True:
         jumps = increaseJumps(jumps)
 
-        full = chand_seed_is_full()
+        full = chand_block_is_full()
         if full is True:
-            loadSeed(jumps=jumps)
+            loadBlock(jumps=jumps)
 
         # move left
         pydirectinput.keyDown('a')
