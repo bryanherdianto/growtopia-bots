@@ -1,3 +1,7 @@
+'''
+v2 is used for a different growtopia world: ANEDSD
+'''
+
 import pyautogui
 import keyboard
 import pydirectinput
@@ -10,14 +14,14 @@ def respawn():
     pyautogui.click(1209, 94)
     pyautogui.click(639, 299)
 
-def chand_seed_is_full():
+def chand_block_is_full():
     # check if there is already 200 chand block in inventory
-    chand_seed_inventory = pyautogui.locateCenterOnScreen('chand-200.png', confidence=0.95)
-    if chand_seed_inventory is None:
+    chand_block_inventory = pyautogui.locateCenterOnScreen('chand-200.png', confidence=0.95)
+    if chand_block_inventory is None:
         return False
     return True
 
-def loadSeed(jumps):
+def loadBlock(jumps):
     # stop moving
     pydirectinput.keyUp('a')
 
@@ -26,9 +30,26 @@ def loadSeed(jumps):
 
     # move left to the chand vending machine
     pydirectinput.press('left', presses=3)
+    while True:
+        try:
+            face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
+            if face is None:
+                face = pyautogui.locateCenterOnScreen('gt-body-right.png', confidence=0.85)
+        except:
+            pyautogui.sleep(1)
+            face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
+            if face is None:
+                face = pyautogui.locateCenterOnScreen('gt-body-right.png', confidence=0.85)
+        pyautogui.sleep(1)
+        if face[0] < 1050:
+            pydirectinput.press('d', presses=1)
+        elif face[0] > 1100:
+            pydirectinput.press('a', presses=1)
+        else:
+            break
 
     # change to wrench
-    wrench_inventory = pyautogui.locateCenterOnScreen('wrench-inventory.png')
+    wrench_inventory = pyautogui.locateCenterOnScreen('wrench-inventory.png', confidence=0.95)
     if wrench_inventory is None:
         pydirectinput.leftClick(491, 933)
 
@@ -41,7 +62,7 @@ def loadSeed(jumps):
         pyautogui.sleep(1)
         face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
         if face is None:
-            face
+            face = pyautogui.locateCenterOnScreen('gt-body-right.png', confidence=0.85)
     pydirectinput.leftClick(x=face[0], y=face[1])
     pyautogui.sleep(3)
 
@@ -54,6 +75,25 @@ def loadSeed(jumps):
     else:
         # click 'put item to machine'
         pydirectinput.leftClick(x=put_item[0], y=put_item[1])
+
+        chand_block_inventory = None
+        while chand_block_inventory is None:
+            chand_block_inventory = pyautogui.locateCenterOnScreen('chand-200.png', confidence=0.95)
+        pydirectinput.leftClick(x=chand_block_inventory[0], y=chand_block_inventory[1])
+
+        # press '1' to set price of item
+        pyautogui.sleep(3)
+        pydirectinput.press('1')
+
+        # scroll down
+        pyautogui.sleep(2)
+        pyautogui.scroll(-1)
+
+        # click 'update'
+        update_vend = None
+        while update_vend is None:
+            update_vend = pyautogui.locateCenterOnScreen('update-vend.png', confidence=0.95)
+        pydirectinput.leftClick(x=update_vend[0], y=update_vend[1])
 
     for i in range(jumps):
         pydirectinput.press('up', presses=2)
@@ -76,6 +116,7 @@ def increaseJumps(jumps):
 def main():
     start_time = time.time()
 
+    print("Input at what level you are: ")
     jumps = int(input())
     jumps += 1
     full = True
@@ -85,9 +126,9 @@ def main():
     while True:
         jumps = increaseJumps(jumps)
 
-        full = chand_seed_is_full()
+        full = chand_block_is_full()
         if full is True:
-            loadSeed(jumps=jumps)
+            loadBlock(jumps=jumps)
 
         # move left
         pydirectinput.keyDown('a')
