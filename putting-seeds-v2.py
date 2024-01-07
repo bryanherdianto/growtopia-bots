@@ -85,8 +85,16 @@ def refillSeeds(jumps):
     pyautogui.sleep(3)
 
     # click on chand seed in inventory
-    chand = pyautogui.locateCenterOnScreen('chand-seed.png', minSearchTime=2, confidence=0.85)
-    pydirectinput.leftClick(x=chand[0], y=chand[1])
+    chand = pyautogui.locateCenterOnScreen('chand-seed.png', minSearchTime=2, confidence=0.95)
+    try:
+        pydirectinput.leftClick(x=chand[0], y=chand[1])
+    except:
+        pyautogui.sleep(2)
+        while chand is None:
+            pyautogui.moveTo(646, 700)
+            pyautogui.scroll(-1)
+            chand = pyautogui.locateCenterOnScreen('chand-seed.png', minSearchTime=2, confidence=0.95)
+        pydirectinput.leftClick(x=chand[0], y=chand[1])
     pyautogui.sleep(3)
 
     # close inventory
@@ -101,7 +109,7 @@ def refillSeeds(jumps):
         pyautogui.sleep(0.5)
 
     # click on chand seed
-    chand = pyautogui.locateCenterOnScreen('chand-seed.png', minSearchTime=2, confidence=0.85)
+    chand = pyautogui.locateCenterOnScreen('chand-seed.png', minSearchTime=2, confidence=0.95)
     pydirectinput.leftClick(x=chand[0], y=chand[1])
 
 def puttingSeeds():
@@ -142,7 +150,7 @@ def increaseJumps(jumps):
 def main():
     print("Input at what level you are: ")
     jumps = int(input())
-    jump += 1
+    jumps += 1
     full = True
 
     print("... Now let the program do all the work :) ...")
