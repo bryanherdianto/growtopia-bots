@@ -14,14 +14,20 @@ def respawn():
     pyautogui.click(1209, 94)
     pyautogui.click(639, 299)
 
-def chand_seed_is_full():
-    # check if there is already 200 chand seed in inventory
-    chand_seed_inventory = pyautogui.locateCenterOnScreen('chand-seed-200.png', confidence=0.95)
-    if chand_seed_inventory is None:
-        return False
+def seed_is_full(farmable_kind):
+    if farmable_kind == 'chand':
+        # check if there is already 200 chand seed in inventory
+        chand_seed = pyautogui.locateCenterOnScreen('./assets/chand-seed-200.png', confidence=0.95)
+        if chand_seed is None:
+            return False
+    elif farmable_kind == 'ftank':
+        # check if there is already 200 chand seed in inventory
+        ftank_seed = pyautogui.locateCenterOnScreen('./assets/ftank-seed-200.png', confidence=0.95)
+        if ftank_seed is None:
+            return False
     return True
 
-def loadSeed(jumps):
+def loadSeed(jumps, farmable_kind):
     # stop moving
     pydirectinput.keyUp('a')
 
@@ -32,14 +38,14 @@ def loadSeed(jumps):
     pydirectinput.press('left', presses=6)
     while True:
         try:
-            face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
+            face = pyautogui.locateCenterOnScreen('./assets/gt-body-left.png', confidence=0.85)
             if face is None:
-                face = pyautogui.locateCenterOnScreen('gt-body-right.png', confidence=0.85)
+                face = pyautogui.locateCenterOnScreen('./assets/gt-body-right.png', confidence=0.85)
         except:
             pyautogui.sleep(1)
-            face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
+            face = pyautogui.locateCenterOnScreen('./assets/gt-body-left.png', confidence=0.85)
             if face is None:
-                face = pyautogui.locateCenterOnScreen('gt-body-right.png', confidence=0.85)
+                face = pyautogui.locateCenterOnScreen('./assets/gt-body-right.png', confidence=0.85)
         pyautogui.sleep(1)
         if face[0] < 970:
             pydirectinput.press('d', presses=1)
@@ -49,36 +55,59 @@ def loadSeed(jumps):
             break
 
     # change to wrench
-    wrench_inventory = pyautogui.locateCenterOnScreen('wrench-inventory.png', confidence=0.95)
+    wrench_inventory = pyautogui.locateCenterOnScreen('./assets/wrench-inventory.png', confidence=0.95)
     if wrench_inventory is None:
         pydirectinput.leftClick(491, 933)
 
     # load seed to vend
     try:
-        face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
+        face = pyautogui.locateCenterOnScreen('./assets/gt-body-left.png', confidence=0.85)
         if face is None:
-            face = pyautogui.locateCenterOnScreen('gt-body-right.png', confidence=0.85)
+            face = pyautogui.locateCenterOnScreen('./assets/gt-body-right.png', confidence=0.85)
     except:
         pyautogui.sleep(1)
-        face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
+        face = pyautogui.locateCenterOnScreen('./assets/gt-body-left.png', confidence=0.85)
         if face is None:
             face
     pydirectinput.leftClick(x=face[0], y=face[1])
     pyautogui.sleep(3)
 
     # get coordinates of 'put item' button
-    put_item = pyautogui.locateCenterOnScreen('put-item.png', confidence=0.9)
+    put_item = pyautogui.locateCenterOnScreen('./assets/put-item.png', confidence=0.9)
     if put_item is None:
         # click 'add to machine'
-        add = pyautogui.locateCenterOnScreen('add-machine.png', confidence=0.95)
+        add = pyautogui.locateCenterOnScreen('./assets/add-machine.png', confidence=0.95)
         pydirectinput.leftClick(x=add[0], y=add[1])
     else:
         # click 'put item to machine'
         pydirectinput.leftClick(x=put_item[0], y=put_item[1])
 
-        chand_seed_inventory = pyautogui.locateCenterOnScreen('chand-seed-200.png', confidence=0.95)
-        pydirectinput.leftClick(x=chand_seed_inventory[0], y=chand_seed_inventory[1])
+        if farmable_kind == 'chand':
+            chand_seed = None
+            while chand_seed is None:
+                chand_seed = pyautogui.locateCenterOnScreen('./assets/chand-seed-200.png', confidence=0.95)
+            pydirectinput.leftClick(x=chand_seed[0], y=chand_seed[1])
+        elif farmable_kind == 'ftank':
+            ftank_seed = None
+            while ftank_seed is None:
+                ftank_seed = pyautogui.locateCenterOnScreen('./assets/ftank-seed-200.png', confidence=0.95)
+            pydirectinput.leftClick(x=ftank_seed[0], y=ftank_seed[1])
+        
+        # press '1' to set price of item
+        pyautogui.sleep(3)
+        pydirectinput.press('1')
 
+        # scroll down
+        pyautogui.sleep(2)
+        pyautogui.scroll(-1)
+
+        # click 'update'
+        update_vend = None
+        while update_vend is None:
+            update_vend = pyautogui.locateCenterOnScreen('./assets/update-vend.png', confidence=0.95)
+        pydirectinput.leftClick(x=update_vend[0], y=update_vend[1])
+
+    # jump to intended platform
     for i in range(jumps):
         pydirectinput.press('up', presses=2)
         pyautogui.sleep(0.5)
@@ -105,14 +134,17 @@ def main():
     jumps += 1
     full = True
 
+    # input kind of farmable (chand / ftank)
+    farmable_kind = input()
+
     pyautogui.sleep(3)
 
     while True:
         jumps = increaseJumps(jumps)
 
-        full = chand_seed_is_full()
+        full = seed_is_full(farmable_kind=farmable_kind)
         if full is True:
-            loadSeed(jumps=jumps)
+            loadSeed(jumps=jumps, farmable_kind=farmable_kind)
 
         # move left
         pydirectinput.keyDown('a')

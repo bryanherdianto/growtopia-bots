@@ -6,6 +6,7 @@ import pydirectinput
 import pyautogui
 
 count = 1
+print("Input 'how many levels of platform are there' - 1 or press '0' to go till infinity:")
 max = int(input())
 
 pyautogui.sleep(3)

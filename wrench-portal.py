@@ -6,13 +6,16 @@ import pydirectinput
 import pyautogui
 
 count = 1
+
+# there are usually 25 levels of platform
+print("Input 'how many levels of platform are there' - 1 or press '0' to go till infinity:")
 max = int(input())
 
 pyautogui.sleep(3)
 
 while True:
     # 1. Wrench the object first
-    pydirectinput.leftClick(180, 450)
+    pydirectinput.leftClick(180, 700)
 
     # click the chosen textbox
     pyautogui.sleep(1)

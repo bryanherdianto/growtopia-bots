@@ -16,7 +16,7 @@ def respawn():
 
 def chand_block_is_full():
     # check if there is already 200 chand block in inventory
-    chand_block_inventory = pyautogui.locateCenterOnScreen('chand-200.png', confidence=0.95)
+    chand_block_inventory = pyautogui.locateCenterOnScreen('./assets/chand-200.png', confidence=0.95)
     if chand_block_inventory is None:
         return False
     return True
@@ -33,9 +33,9 @@ def loadBlock(jumps):
     while True:
         face = None
         while face is None:
-            face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
+            face = pyautogui.locateCenterOnScreen('./assets/gt-body-left.png', confidence=0.85)
             if face is None:
-                face = pyautogui.locateCenterOnScreen('gt-body-right.png', confidence=0.85)
+                face = pyautogui.locateCenterOnScreen('./assets/gt-body-right.png', confidence=0.85)
             
         if face[0] < 1050:
             pydirectinput.press('d', presses=1)
@@ -45,30 +45,30 @@ def loadBlock(jumps):
             break
 
     # change to wrench
-    wrench_inventory = pyautogui.locateCenterOnScreen('wrench-inventory.png', confidence=0.95)
+    wrench_inventory = pyautogui.locateCenterOnScreen('./assets/wrench-inventory.png', confidence=0.95)
     if wrench_inventory is None:
         pydirectinput.leftClick(491, 933)
 
     # load seed to vend
     try:
-        face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
+        face = pyautogui.locateCenterOnScreen('./assets/gt-body-left.png', confidence=0.85)
         if face is None:
-            face = pyautogui.locateCenterOnScreen('gt-body-right.png', confidence=0.85)
+            face = pyautogui.locateCenterOnScreen('./assets/gt-body-right.png', confidence=0.85)
     except:
         pyautogui.sleep(1)
-        face = pyautogui.locateCenterOnScreen('gt-body-left.png', confidence=0.85)
+        face = pyautogui.locateCenterOnScreen('./assets/gt-body-left.png', confidence=0.85)
         if face is None:
             face
     pydirectinput.leftClick(x=face[0], y=face[1])
     pyautogui.sleep(3)
 
     # get coordinates of 'put item' button
-    put_item = pyautogui.locateCenterOnScreen('put-item.png', confidence=0.9)
+    put_item = pyautogui.locateCenterOnScreen('./assets/put-item.png', confidence=0.9)
     if put_item is None:
         # click 'add to machine'
         add = None
         while add is None:
-            add = pyautogui.locateCenterOnScreen('add-machine.png', confidence=0.9)
+            add = pyautogui.locateCenterOnScreen('./assets/add-machine.png', confidence=0.9)
         pydirectinput.leftClick(x=add[0], y=add[1])
     else:
         # click 'put item to machine'
@@ -76,7 +76,7 @@ def loadBlock(jumps):
 
         chand_block_inventory = None
         while chand_block_inventory is None:
-            chand_block_inventory = pyautogui.locateCenterOnScreen('chand-200.png', confidence=0.95)
+            chand_block_inventory = pyautogui.locateCenterOnScreen('./assets/chand-200.png', confidence=0.95)
         pydirectinput.leftClick(x=chand_block_inventory[0], y=chand_block_inventory[1])
 
         # press '1' to set price of item
@@ -90,7 +90,7 @@ def loadBlock(jumps):
         # click 'update'
         update_vend = None
         while update_vend is None:
-            update_vend = pyautogui.locateCenterOnScreen('update-vend.png', confidence=0.95)
+            update_vend = pyautogui.locateCenterOnScreen('./assets/update-vend.png', confidence=0.95)
         pydirectinput.leftClick(x=update_vend[0], y=update_vend[1])
 
     pyautogui.sleep(3)
@@ -101,10 +101,10 @@ def loadBlock(jumps):
         for i in range(0, jumps):
             if i == 0:
                 pydirectinput.press('up', presses=3)
-                pyautogui.sleep(1)
+                pyautogui.sleep(0.5)
                 continue
             pydirectinput.press('up', presses=2)
-            pyautogui.sleep(1)
+            pyautogui.sleep(0.5)
 
 def increaseJumps(jumps):
     global updated
